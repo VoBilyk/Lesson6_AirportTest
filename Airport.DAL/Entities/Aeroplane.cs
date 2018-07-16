@@ -2,10 +2,11 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using Airport.DAL.Interfaces;
 
 namespace Airport.DAL.Entities
 {
-    public class Aeroplane
+    public class Aeroplane : IEntity
     {
         public Guid Id { get; set; }
 

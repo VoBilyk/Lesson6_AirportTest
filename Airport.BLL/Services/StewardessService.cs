@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using AutoMapper;
+using FluentValidation;
 using Airport.BLL.Interfaces;
 using Airport.DAL.Interfaces;
 using Airport.DAL.Entities;
@@ -13,11 +14,13 @@ namespace Airport.BLL.Services
     {
         private IUnitOfWork db;
         private IMapper mapper;
-
-        public StewardessService(IUnitOfWork uow, IMapper mapper)
+        private AbstractValidator<Stewardess> validator;
+        
+        public StewardessService(IUnitOfWork uow, IMapper mapper, AbstractValidator<Stewardess> validator)
         {
             this.db = uow;
             this.mapper = mapper;
+            this.validator = validator;
         }
 
 
@@ -36,8 +39,17 @@ namespace Airport.BLL.Services
             var stewardess = mapper.Map<StewardessDto, Stewardess>(stewardessDto);
             stewardess.Id = Guid.NewGuid();
 
-            db.StewardessRepositiry.Create(stewardess);
-            db.SaveChanges();
+            var validationResult = validator.Validate(stewardess);
+
+            if (validationResult.IsValid)
+            {
+                db.StewardessRepositiry.Create(stewardess);
+                db.SaveChanges();
+            }
+            else
+            {
+                throw new ValidationException(validationResult.Errors);
+            }
 
             return mapper.Map<Stewardess, StewardessDto>(stewardess);
         }

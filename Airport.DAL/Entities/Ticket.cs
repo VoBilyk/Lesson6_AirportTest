@@ -1,9 +1,10 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
+using Airport.DAL.Interfaces;
 
 namespace Airport.DAL.Entities
 {
-    public class Ticket
+    public class Ticket : IEntity
     {
         public Guid Id { get; set; }
 

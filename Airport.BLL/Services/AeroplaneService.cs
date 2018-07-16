@@ -1,11 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
+using AutoMapper;
+using FluentValidation;
 using Airport.BLL.Interfaces;
 using Airport.DAL.Interfaces;
 using Airport.DAL.Entities;
 using Airport.Shared.DTO;
-using AutoMapper;
+
 
 namespace Airport.BLL.Services
 {
@@ -13,11 +14,13 @@ namespace Airport.BLL.Services
     {
         private IUnitOfWork db;
         private IMapper mapper;
+        private AbstractValidator<Aeroplane> validator;
 
-        public AeroplaneService(IUnitOfWork uow, IMapper mapper)
+        public AeroplaneService(IUnitOfWork uow, IMapper mapper, AbstractValidator<Aeroplane> validator)
         {
             this.db = uow;
             this.mapper = mapper;
+            this.validator = validator;
         }
 
 
@@ -37,8 +40,18 @@ namespace Airport.BLL.Services
 
             aeroplane.Id = Guid.NewGuid();
             aeroplane.AeroplaneType = db.AeroplaneTypeRepository.Get(aeroplaneDto.AeroplaneTypeId);
-            db.AeroplaneRepository.Create(aeroplane);
-            db.SaveChanges();
+
+            var validationResult = validator.Validate(aeroplane);
+
+            if (validationResult.IsValid)
+            {
+                db.AeroplaneRepository.Create(aeroplane);
+                db.SaveChanges();
+            }
+            else
+            {
+                throw new ValidationException(validationResult.Errors);
+            }
 
             return mapper.Map<Aeroplane, AeroplaneDto>(aeroplane);
         }
@@ -49,8 +62,18 @@ namespace Airport.BLL.Services
 
             aeroplane.Id = id;
             aeroplane.AeroplaneType = db.AeroplaneTypeRepository.Get(aeroplaneDto.AeroplaneTypeId);
-            db.AeroplaneRepository.Update(aeroplane);
-            db.SaveChanges();
+
+            var validationResult = validator.Validate(aeroplane);
+            
+            if (validationResult.IsValid)
+            {
+                db.AeroplaneRepository.Update(aeroplane);
+                db.SaveChanges();
+            }
+            else
+            {
+                throw new ValidationException(validationResult.Errors);
+            }
 
             return mapper.Map<Aeroplane, AeroplaneDto>(aeroplane);
         }

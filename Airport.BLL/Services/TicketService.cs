@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using AutoMapper;
+using FluentValidation;
 using Airport.BLL.Interfaces;
 using Airport.DAL.Interfaces;
 using Airport.DAL.Entities;
 using Airport.Shared.DTO;
+
 
 namespace Airport.BLL.Services
 {
@@ -12,11 +14,13 @@ namespace Airport.BLL.Services
     {
         private IUnitOfWork db;
         private IMapper mapper;
-
-        public TicketService(IUnitOfWork uow, IMapper mapper)
+        private AbstractValidator<Ticket> validator;
+        
+        public TicketService(IUnitOfWork uow, IMapper mapper, AbstractValidator<Ticket> validator)
         {
             this.db = uow;
             this.mapper = mapper;
+            this.validator = validator;
         }
 
 
@@ -36,8 +40,17 @@ namespace Airport.BLL.Services
             ticket.Id = Guid.NewGuid();
             ticket.Flight = db.FlightRepository.Get(ticketDto.FlightId);
 
-            db.TicketRepository.Create(ticket);
-            db.SaveChanges();
+            var validationResult = validator.Validate(ticket);
+
+            if (validationResult.IsValid)
+            {
+                db.TicketRepository.Create(ticket);
+                db.SaveChanges();
+            }
+            else
+            {
+                throw new ValidationException(validationResult.Errors);
+            }
 
             return mapper.Map<Ticket, TicketDto>(ticket);
         }
@@ -47,9 +60,18 @@ namespace Airport.BLL.Services
             var ticket = mapper.Map<TicketDto, Ticket>(ticketDto);
             ticket.Id = id;
             ticket.Flight = db.FlightRepository.Get(ticketDto.FlightId);
-            
-            db.TicketRepository.Update(ticket);
-            db.SaveChanges();
+
+            var validationResult = validator.Validate(ticket);
+
+            if (validationResult.IsValid)
+            {
+                db.TicketRepository.Update(ticket);
+                db.SaveChanges();
+            }
+            else
+            {
+                throw new ValidationException(validationResult.Errors);
+            }
 
             return mapper.Map<Ticket, TicketDto>(ticket);
         }

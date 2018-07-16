@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using AutoMapper;
+using FluentValidation;
 using Airport.BLL.Interfaces;
 using Airport.DAL.Interfaces;
 using Airport.DAL.Entities;
@@ -14,11 +15,14 @@ namespace Airport.BLL.Services
     {
         private IUnitOfWork db;
         private IMapper mapper;
+        private AbstractValidator<Flight> validator;
 
-        public FlightService(IUnitOfWork uow, IMapper mapper)
+
+        public FlightService(IUnitOfWork uow, IMapper mapper, AbstractValidator<Flight> validator)
         {
             this.db = uow;
             this.mapper = mapper;
+            this.validator = validator;
         }
 
 
@@ -38,9 +42,18 @@ namespace Airport.BLL.Services
             flight.Id = Guid.NewGuid();
             flight.Tickets = db.TicketRepository.GetAll().Where(i => flightDto.TicketsId.Contains(i.Id)).ToList();
 
-            db.FlightRepository.Create(flight);
-            db.SaveChanges();
+            var validationResult = validator.Validate(flight);
 
+            if (validationResult.IsValid)
+            {
+                db.FlightRepository.Create(flight);
+                db.SaveChanges();
+            }
+            else
+            {
+                throw new ValidationException(validationResult.Errors);
+            }
+            
             return mapper.Map<Flight, FlightDto>(flight);
         }
 
@@ -49,9 +62,18 @@ namespace Airport.BLL.Services
             var flight = mapper.Map<FlightDto, Flight>(flightDto);
             flight.Id = id;
             flight.Tickets = db.TicketRepository.GetAll().Where(i => flightDto.TicketsId.Contains(i.Id)).ToList();
-            
-            db.FlightRepository.Update(flight);
-            db.SaveChanges();
+
+            var validationResult = validator.Validate(flight);
+
+            if (validationResult.IsValid)
+            {
+                db.FlightRepository.Update(flight);
+                db.SaveChanges();
+            }
+            else
+            {
+                throw new ValidationException(validationResult.Errors);
+            }
 
             return mapper.Map<Flight, FlightDto>(flight);
         }

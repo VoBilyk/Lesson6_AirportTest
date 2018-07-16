@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using AutoMapper;
+using FluentValidation;
 using Airport.BLL.Interfaces;
 using Airport.DAL.Interfaces;
 using Airport.DAL.Entities;
 using Airport.Shared.DTO;
+
 
 namespace Airport.BLL.Services
 {
@@ -12,11 +14,13 @@ namespace Airport.BLL.Services
     {
         private IUnitOfWork db;
         private IMapper mapper;
-
-        public PilotService(IUnitOfWork uow, IMapper mapper)
+        private AbstractValidator<Pilot> validator;
+        
+        public PilotService(IUnitOfWork uow, IMapper mapper, AbstractValidator<Pilot> validator)
         {
             this.db = uow;
             this.mapper = mapper;
+            this.validator = validator;
         }
 
 
@@ -35,8 +39,17 @@ namespace Airport.BLL.Services
             var pilot = mapper.Map<PilotDto, Pilot>(pilotDto);
             pilot.Id = Guid.NewGuid();
 
-            db.PilotRepositiry.Create(pilot);
-            db.SaveChanges();
+            var validationResult = validator.Validate(pilot);
+
+            if (validationResult.IsValid)
+            {
+                db.PilotRepositiry.Create(pilot);
+                db.SaveChanges();
+            }
+            else
+            {
+                throw new ValidationException(validationResult.Errors);
+            }
 
             return mapper.Map<Pilot, PilotDto>(pilot);
         }
@@ -46,8 +59,17 @@ namespace Airport.BLL.Services
             var pilot = mapper.Map<PilotDto, Pilot>(pilotDto);
             pilot.Id = id;
 
-            db.PilotRepositiry.Update(pilot);
-            db.SaveChanges();
+            var validationResult = validator.Validate(pilot);
+
+            if (validationResult.IsValid)
+            {
+                db.PilotRepositiry.Update(pilot);
+                db.SaveChanges();
+            }
+            else
+            {
+                throw new ValidationException(validationResult.Errors);
+            }
 
             return mapper.Map<Pilot, PilotDto>(pilot);
         }

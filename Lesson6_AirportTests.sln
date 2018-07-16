@@ -11,7 +11,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Airport.Shared", "Airport.S
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Airport.BLL", "Airport.BLL\Airport.BLL.csproj", "{86BD4C23-C743-478E-86AA-C5E1F6F89D0E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Airport.Tests", "Airport.Tests\Airport.Tests.csproj", "{4984A35B-B041-403F-B27B-BF505C49F669}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Airport.Tests", "Airport.Tests\Airport.Tests.csproj", "{4984A35B-B041-403F-B27B-BF505C49F669}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
