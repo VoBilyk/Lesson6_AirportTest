@@ -6,7 +6,7 @@ namespace Airport.DAL
 {
     public class UnitOfWork : IUnitOfWork
     {
-        private AirportContext db = new AirportContext();
+        private AirportContext db;
 
         private TicketRepository ticketRepository;
         private AeroplaneRepository aeroplaneRepository;
@@ -16,7 +16,12 @@ namespace Airport.DAL
         private FlightRepository flightRepository;
         private PilotRepository pilotRepository;
         private StewardessRepository stewardessRepository;
-        
+
+        public UnitOfWork(AirportContext db)
+        {
+            this.db = db;
+        }
+
 
         public IRepository<Ticket> TicketRepository
         {

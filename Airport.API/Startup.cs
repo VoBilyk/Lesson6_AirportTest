@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.EntityFrameworkCore;
 using AutoMapper;
 using FluentValidation;
 using Airport.DAL;
@@ -12,6 +13,7 @@ using Airport.BLL.Interfaces;
 using Airport.BLL.Services;
 using Airport.Shared.DTO;
 using Airport.BLL.Validators;
+
 
 namespace Airport.API
 {
@@ -50,6 +52,9 @@ namespace Airport.API
             services.AddTransient<AbstractValidator<Crew>, CrewValidator>();
             services.AddTransient<AbstractValidator<Departure>, DepartureValidator>();
             services.AddTransient<AbstractValidator<Ticket>, TicketValidator>();
+            
+            services.AddDbContext<AirportContext>(options =>
+               options.UseSqlServer(Configuration.GetConnectionString("AirportDb")));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
