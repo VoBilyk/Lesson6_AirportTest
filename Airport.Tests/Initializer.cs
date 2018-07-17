@@ -1,32 +1,30 @@
 ﻿using Airport.DAL.Entities;
 using Bogus;
 using System;
-using System.Collections.Generic;
+
 
 namespace Airport.Tests
 {
-    static public class DataInitializer
+    static public class Initializer
     {
-        static public List<Pilot> Pilots;
+        static public Faker<Pilot> Pilots;
 
-        static public List<Stewardess> Stewardesses;
+        static public Faker<Stewardess> Stewardesses;
 
-        static public List<Crew> Crews;
+        static public Faker<Crew> Crews;
 
-        static public List<AeroplaneType> AeroplaneTypes;
+        static public Faker<AeroplaneType> AeroplaneTypes;
 
-        static public List<Aeroplane> Aeroplanes;
+        static public Faker<Aeroplane> Aeroplanes;
 
-        static public List<Departure> Departures;
+        static public Faker<Departure> Departures;
 
-        static public List<Flight> Flights;
+        static public Faker<Flight> Flights;
 
-        static public List<Ticket> Tickets;
+        static public Faker<Ticket> Tickets;
 
-        static DataInitializer()
+        static Initializer()
         {
-            int amount = 5;
-
             var pilotFaker = new Faker<Pilot>()
                 .RuleFor(o => o.Id, f => Guid.NewGuid())
                 .RuleFor(o => o.FirstName, f => f.Name.FirstName(Bogus.DataSets.Name.Gender.Male))
@@ -76,13 +74,14 @@ namespace Airport.Tests
                 .RuleFor(o => o.DepartureTime, f => f.Date.Soon(365).ToUniversalTime())
                 .RuleFor(o => o.ArrivalTime, (f, o) => (o.DepartureTime + f.Date.Timespan(new TimeSpan(8, 0, 0))).ToUniversalTime());
 
-            Pilots = pilotFaker.Generate(amount);
-            Stewardesses = stewardessFaker.Generate(amount);
-            Crews = crewFaker.Generate(amount);
-            Flights = flightFaker.Generate(amount);
-            Aeroplanes = aeroplaneFaker.Generate(amount);
-            AeroplaneTypes = aeroplaneTypeFaker.Generate(amount);
-            Departures = departureFaker.Generate(amount);
+            Pilots = pilotFaker;
+            Stewardesses = stewardessFaker;
+            Crews = crewFaker;
+            Flights = flightFaker;
+            Tickets = ticketFaker;
+            Aeroplanes = aeroplaneFaker;
+            AeroplaneTypes = aeroplaneTypeFaker;
+            Departures = departureFaker;
         }
     }
 }

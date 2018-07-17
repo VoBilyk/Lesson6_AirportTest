@@ -9,11 +9,14 @@ namespace Airport.DAL.Repositories
     public class GenericRepository<TEntity> : IRepository<TEntity> where TEntity : class, IEntity
     {
         protected DbSet<TEntity> dbSet;
+        protected AirportContext context;
 
 
         public GenericRepository(AirportContext context)
         {
+            this.context = context;
             this.dbSet = context.Set<TEntity>();
+
         }
 
 
@@ -40,7 +43,7 @@ namespace Airport.DAL.Repositories
 
             if (foundedItem != null)
             {
-                throw new ArgumentException("Item has already exist");
+                throw new ArgumentException($"Item id: {item.Id}, has already exist");
             }
 
             dbSet.Add(item);
@@ -52,9 +55,9 @@ namespace Airport.DAL.Repositories
 
             if (foundedItem == null)
             {
-                throw new ArgumentException("Item don`t exist");
+                throw new ArgumentException($"Item id: {item.Id}, don`t exist");
             }
-
+            
             dbSet.Update(item);
         }
 
@@ -64,7 +67,7 @@ namespace Airport.DAL.Repositories
 
             if (item == null)
             {
-                throw new ArgumentException("Id don`t exist");
+                throw new ArgumentException($"Item id: {item.Id}, don`t exist");
             }
             
             dbSet.Remove(item);
