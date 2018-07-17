@@ -7,21 +7,21 @@ namespace Airport.Tests
 {
     static public class Initializer
     {
-        static public Faker<Pilot> Pilots;
+        static public Faker<Pilot> PilotFaker;
 
-        static public Faker<Stewardess> Stewardesses;
+        static public Faker<Stewardess> StewardessFaker;
 
-        static public Faker<Crew> Crews;
+        static public Faker<Crew> CrewFaker;
 
-        static public Faker<AeroplaneType> AeroplaneTypes;
+        static public Faker<AeroplaneType> AeroplaneTypeFaker;
 
-        static public Faker<Aeroplane> Aeroplanes;
+        static public Faker<Aeroplane> AeroplaneFaker;
 
-        static public Faker<Departure> Departures;
+        static public Faker<Departure> DepartureFaker;
 
-        static public Faker<Flight> Flights;
+        static public Faker<Flight> FlightFaker;
 
-        static public Faker<Ticket> Tickets;
+        static public Faker<Ticket> TicketFaker;
 
         static Initializer()
         {
@@ -74,14 +74,14 @@ namespace Airport.Tests
                 .RuleFor(o => o.DepartureTime, f => f.Date.Soon(365).ToUniversalTime())
                 .RuleFor(o => o.ArrivalTime, (f, o) => (o.DepartureTime + f.Date.Timespan(new TimeSpan(8, 0, 0))).ToUniversalTime());
 
-            Pilots = pilotFaker;
-            Stewardesses = stewardessFaker;
-            Crews = crewFaker;
-            Flights = flightFaker;
-            Tickets = ticketFaker;
-            Aeroplanes = aeroplaneFaker;
-            AeroplaneTypes = aeroplaneTypeFaker;
-            Departures = departureFaker;
+            PilotFaker = pilotFaker;
+            StewardessFaker = stewardessFaker;
+            CrewFaker = crewFaker;
+            FlightFaker = flightFaker;
+            TicketFaker = ticketFaker;
+            AeroplaneFaker = aeroplaneFaker;
+            AeroplaneTypeFaker = aeroplaneTypeFaker;
+            DepartureFaker = departureFaker;
         }
     }
 }

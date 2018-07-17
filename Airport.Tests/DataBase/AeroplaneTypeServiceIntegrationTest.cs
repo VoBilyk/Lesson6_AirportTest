@@ -43,7 +43,7 @@ namespace Airport.Tests.IntegrationTests
             service = new AeroplaneTypeService(unitOfWork, mapper, validator);
 
             // Adding test item to db for updating and getting and deleting in tests 
-            testItem = Initializer.AeroplaneTypes.Generate();
+            testItem = Initializer.AeroplaneTypeFaker.Generate();
             db.AeroplaneTypes.Add(testItem);
             db.SaveChanges();
         }
@@ -78,7 +78,7 @@ namespace Airport.Tests.IntegrationTests
         public void Create_WhenCreatedNewItem_ThenElementsInDbBecomePlusOne()
         {
             // Arrange
-            var item = Initializer.AeroplaneTypes.Generate();
+            var item = Initializer.AeroplaneTypeFaker.Generate();
             var dto = mapper.Map<AeroplaneType, AeroplaneTypeDto>(item);
             var amountBeforeCreating = db.AeroplaneTypes.Count();
 

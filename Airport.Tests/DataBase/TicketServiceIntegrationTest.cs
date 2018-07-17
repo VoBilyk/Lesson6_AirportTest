@@ -42,8 +42,8 @@ namespace Airport.Tests.IntegrationTests
             service = new TicketService(unitOfWork, mapper, validator);
 
             // Adding test item to db for updating and getting and deleting in tests 
-            testItem = Initializer.Tickets.Generate();
-            testItem.Flight = Initializer.Flights.Generate();
+            testItem = Initializer.TicketFaker.Generate();
+            testItem.Flight = Initializer.FlightFaker.Generate();
             db.Flights.Add(testItem.Flight);
             db.Tickets.Add(testItem);
             db.SaveChanges();
@@ -78,8 +78,8 @@ namespace Airport.Tests.IntegrationTests
         public void Create_WhenCreatedNewItem_ThenElementsInDbBecomePlusOne()
         {
             // Arrange
-            var item = Initializer.Tickets.Generate();
-            item.Flight = Initializer.Flights.Generate();
+            var item = Initializer.TicketFaker.Generate();
+            item.Flight = Initializer.FlightFaker.Generate();
             db.Flights.Add(item.Flight);
             db.SaveChanges();
 

@@ -43,7 +43,7 @@ namespace Airport.Tests.IntegrationTests
             service = new PilotService(unitOfWork, mapper, validator);
 
             // Adding test item to db for updating and getting and deleting in tests 
-            testItem = Initializer.Pilots.Generate();
+            testItem = Initializer.PilotFaker.Generate();
             db.Pilots.Add(testItem);
             db.SaveChanges();
         }
@@ -78,7 +78,7 @@ namespace Airport.Tests.IntegrationTests
         public void Create_WhenCreatedNewItem_ThenElementsInDbBecomePlusOne()
         {
             // Arrange
-            var item = Initializer.Pilots.Generate();
+            var item = Initializer.PilotFaker.Generate();
             var dto = mapper.Map<Pilot, PilotDto>(item);
             var amountBeforeCreating = db.Pilots.Count();
 
