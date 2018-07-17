@@ -39,15 +39,20 @@ namespace Airport.Tests.Services
         public void Create_WhenDtoIsPassed_ThenReturnedTheSameWithCreatedId()
         {
             // Arrange
+            var aeroplaneTypeId = Guid.NewGuid();
+
             var dto = new AeroplaneDto()
             {
-                AeroplaneTypeId = Guid.NewGuid(),
+                AeroplaneTypeId = aeroplaneTypeId,
                 Name = "Boeing-747",
                 Lifetime = new TimeSpan(10,0,0)
             };
 
-            var service = new AeroplaneService(unitOfWorkFake, mapper, alwaysValidValidator);
+            A.CallTo(() => unitOfWorkFake.AeroplaneTypeRepository.Get(aeroplaneTypeId))
+                .Returns(new AeroplaneType { Id = aeroplaneTypeId });
 
+            var service = new AeroplaneService(unitOfWorkFake, mapper, alwaysValidValidator);
+            
             // Act
             var returnedDto = service.Create(dto);
 
@@ -77,13 +82,17 @@ namespace Airport.Tests.Services
         {
             // Arrange
             var id = Guid.NewGuid();
+            var aeroplaneTypeId = Guid.NewGuid();
 
             var dto = new AeroplaneDto()
             {
-                AeroplaneTypeId = Guid.NewGuid(),
+                AeroplaneTypeId = aeroplaneTypeId,
                 Name = "Boeing-747",
                 Lifetime = new TimeSpan(10, 0, 0)
             };
+
+            A.CallTo(() => unitOfWorkFake.AeroplaneTypeRepository.Get(aeroplaneTypeId))
+                .Returns(new AeroplaneType { Id = aeroplaneTypeId });
 
             var service = new AeroplaneService(unitOfWorkFake, mapper, alwaysValidValidator);
 
