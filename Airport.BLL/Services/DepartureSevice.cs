@@ -14,9 +14,9 @@ namespace Airport.BLL.Services
     {
         private IUnitOfWork db;
         private IMapper mapper;
-        AbstractValidator<Departure> validator;
+        IValidator<Departure> validator;
 
-        public DepartureService(IUnitOfWork uow, IMapper mapper, AbstractValidator<Departure> validator)
+        public DepartureService(IUnitOfWork uow, IMapper mapper, IValidator<Departure> validator)
         {
             this.db = uow;
             this.mapper = mapper;

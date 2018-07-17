@@ -15,10 +15,10 @@ namespace Airport.BLL.Services
     {
         private IUnitOfWork db;
         private IMapper mapper;
-        private AbstractValidator<Flight> validator;
+        private IValidator<Flight> validator;
 
 
-        public FlightService(IUnitOfWork uow, IMapper mapper, AbstractValidator<Flight> validator)
+        public FlightService(IUnitOfWork uow, IMapper mapper, IValidator<Flight> validator)
         {
             this.db = uow;
             this.mapper = mapper;

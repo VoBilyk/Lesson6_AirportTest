@@ -13,7 +13,7 @@ using Airport.BLL.Interfaces;
 using Airport.BLL.Services;
 using Airport.Shared.DTO;
 using Airport.BLL.Validators;
-
+using Airport.BLL.Mappers;
 
 namespace Airport.API
 {
@@ -42,16 +42,18 @@ namespace Airport.API
             services.AddScoped<IFlightService, FlightService>();
             services.AddScoped<IDepartureService, DepartureService>();
 
-            services.AddScoped(_ => MapperConfiguration().CreateMapper());
+            //services.AddScoped(_ => MapperConfiguration().CreateMapper());
+            var config = new MapperConfiguration(cfg => cfg.AddProfile(new GeneralMapperProfile()));
+            services.AddSingleton(_ => config.CreateMapper());
 
-            services.AddTransient<AbstractValidator<Aeroplane>, AeroplaneValidator>();
-            services.AddTransient<AbstractValidator<AeroplaneType>, AeroplaneTypeValidator>();
-            services.AddTransient<AbstractValidator<Flight>, FlightValidator>();
-            services.AddTransient<AbstractValidator<Pilot>, PilotValidator>();
-            services.AddTransient<AbstractValidator<Stewardess>, StewardessValidator>();
-            services.AddTransient<AbstractValidator<Crew>, CrewValidator>();
-            services.AddTransient<AbstractValidator<Departure>, DepartureValidator>();
-            services.AddTransient<AbstractValidator<Ticket>, TicketValidator>();
+            services.AddTransient<IValidator<Aeroplane>, AeroplaneValidator>();
+            services.AddTransient<IValidator<AeroplaneType>, AeroplaneTypeValidator>();
+            services.AddTransient<IValidator<Flight>, FlightValidator>();
+            services.AddTransient<IValidator<Pilot>, PilotValidator>();
+            services.AddTransient<IValidator<Stewardess>, StewardessValidator>();
+            services.AddTransient<IValidator<Crew>, CrewValidator>();
+            services.AddTransient<IValidator<Departure>, DepartureValidator>();
+            services.AddTransient<IValidator<Ticket>, TicketValidator>();
             
             services.AddDbContext<AirportContext>(options =>
                options.UseSqlServer(Configuration.GetConnectionString("AirportDb")));

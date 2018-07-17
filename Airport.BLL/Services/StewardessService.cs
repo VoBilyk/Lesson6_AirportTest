@@ -14,9 +14,9 @@ namespace Airport.BLL.Services
     {
         private IUnitOfWork db;
         private IMapper mapper;
-        private AbstractValidator<Stewardess> validator;
+        private IValidator<Stewardess> validator;
         
-        public StewardessService(IUnitOfWork uow, IMapper mapper, AbstractValidator<Stewardess> validator)
+        public StewardessService(IUnitOfWork uow, IMapper mapper, IValidator<Stewardess> validator)
         {
             this.db = uow;
             this.mapper = mapper;
@@ -59,8 +59,17 @@ namespace Airport.BLL.Services
             var stewardess = mapper.Map<StewardessDto, Stewardess>(stewardessDto);
             stewardess.Id = id;
 
-            db.StewardessRepositiry.Update(stewardess);
-            db.SaveChanges();
+            var validationResult = validator.Validate(stewardess);
+            
+            if (validationResult.IsValid)
+            {
+                db.StewardessRepositiry.Update(stewardess);
+                db.SaveChanges();
+            }
+            else
+            {
+                throw new ValidationException(validationResult.Errors);
+            }
 
             return mapper.Map<Stewardess, StewardessDto>(stewardess);
         }
