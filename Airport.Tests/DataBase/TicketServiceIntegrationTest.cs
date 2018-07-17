@@ -1,5 +1,4 @@
 ﻿using NUnit.Framework;
-using FakeItEasy;
 using FluentValidation;
 using AutoMapper;
 using Airport.BLL.Mappers;
@@ -12,8 +11,6 @@ using Airport.DAL;
 using Airport.BLL.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using System.Linq;
-using System;
-using Microsoft.EntityFrameworkCore.Storage;
 
 namespace Airport.Tests.IntegrationTests
 {
