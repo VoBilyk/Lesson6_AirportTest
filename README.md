@@ -1,5 +1,4 @@
-# Lesson6_AirportTest
-Hometask 6 for binary-studio academy 18 
+# Hometask 6 for binary-studio academy 18 
 
 ## Що зроблено:
 * До попередього [проекту](https://github.com/VoBilyk/Lesson5_EntityFramework) добавлено тести, а саме
