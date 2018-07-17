@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using System;
 using System.Net.Http;
 using System.Net;
 using System.Text;
@@ -7,7 +8,7 @@ using NUnit.Framework;
 using Airport.Shared.DTO;
 using Airport.DAL;
 using Airport.DAL.Entities;
-using System;
+
 
 namespace Airport.Tests.Requests
 {

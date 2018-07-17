@@ -9,9 +9,11 @@ namespace Airport.Shared.DTO
         public Guid Id { get; set; }
 
         [Required]
+        [MinLength(3)]
         public string FirstName { get; set; }
 
         [Required]
+        [MinLength(3)]
         public string SecondName { get; set; }
 
         [Required]
