@@ -1,10 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using Airport.DAL.Interfaces;
 
 namespace Airport.DAL.Entities
 {
-    public class Stewardess
+    public class Stewardess : IEntity
     {
         public Guid Id { get; set; }
 

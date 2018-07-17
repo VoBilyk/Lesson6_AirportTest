@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace Airport.DAL.Interfaces
 {
-    public interface IRepository<TEntity>
+    public interface IRepository<TEntity> where TEntity : IEntity
     {
         List<TEntity> GetAll();
 

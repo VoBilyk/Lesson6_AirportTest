@@ -6,14 +6,17 @@ using Airport.DAL.Interfaces;
 
 namespace Airport.DAL.Repositories
 {
-    public class GenericRepository<TEntity> : IRepository<TEntity> where TEntity : class
+    public class GenericRepository<TEntity> : IRepository<TEntity> where TEntity : class, IEntity
     {
         protected DbSet<TEntity> dbSet;
+        protected AirportContext context;
 
 
         public GenericRepository(AirportContext context)
         {
+            this.context = context;
             this.dbSet = context.Set<TEntity>();
+
         }
 
 
@@ -36,11 +39,11 @@ namespace Airport.DAL.Repositories
 
         public virtual void Create(TEntity item)
         {
-            var foundedItem = dbSet.Find(item);
+            var foundedItem = dbSet.Find(item.Id);
 
-            if (foundedItem == null)
+            if (foundedItem != null)
             {
-                throw new ArgumentException("Item don`t exists");
+                throw new ArgumentException($"Item id: {item.Id}, has already exist");
             }
 
             dbSet.Add(item);
@@ -48,13 +51,13 @@ namespace Airport.DAL.Repositories
 
         public virtual void Update(TEntity item)
         {
-            var foundedItem = dbSet.Find(item);
+            var foundedItem = dbSet.Find(item.Id);
 
             if (foundedItem == null)
             {
-                throw new ArgumentException("Item don`t exists");
+                throw new ArgumentException($"Item id: {item.Id}, don`t exist");
             }
-
+            
             dbSet.Update(item);
         }
 
@@ -64,7 +67,7 @@ namespace Airport.DAL.Repositories
 
             if (item == null)
             {
-                throw new ArgumentException("Id don`t exists");
+                throw new ArgumentException($"Item id: {item.Id}, don`t exist");
             }
             
             dbSet.Remove(item);

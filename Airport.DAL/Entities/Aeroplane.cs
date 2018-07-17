@@ -2,10 +2,11 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using Airport.DAL.Interfaces;
 
 namespace Airport.DAL.Entities
 {
-    public class Aeroplane
+    public class Aeroplane : IEntity
     {
         public Guid Id { get; set; }
 
@@ -17,20 +18,24 @@ namespace Airport.DAL.Entities
         public AeroplaneType AeroplaneType { get; set; }
 
         [Required]
-        public long LifeTimeHourses { get; set; }
+        public double LifeTimeHourses { get; set; }
 
         public virtual ICollection<Departure> Departures { get; set; }
+
+        [NotMapped]
+        private TimeSpan LifetimeTimeSpan;
 
         [NotMapped]
         public TimeSpan LifetimeFullForm {
             get
             {
-                return LifetimeFullForm;
+                return LifetimeTimeSpan;
             }
 
             set
             {
-                value = TimeSpan.FromHours(LifeTimeHourses);
+                LifetimeTimeSpan = value;
+                LifeTimeHourses = value.TotalHours;
             }
         }
     }

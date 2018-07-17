@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using AutoMapper;
+using FluentValidation;
 using Airport.BLL.Interfaces;
 using Airport.DAL.Interfaces;
 using Airport.DAL.Entities;
@@ -13,11 +14,13 @@ namespace Airport.BLL.Services
     {
         private IUnitOfWork db;
         private IMapper mapper;
+        IValidator<Departure> validator;
 
-        public DepartureService(IUnitOfWork uow, IMapper mapper)
+        public DepartureService(IUnitOfWork uow, IMapper mapper, IValidator<Departure> validator)
         {
             this.db = uow;
             this.mapper = mapper;
+            this.validator = validator;
         }
 
 
@@ -38,8 +41,17 @@ namespace Airport.BLL.Services
             departure.Crew = db.CrewRepositiry.Get(departureDto.CrewId);
             departure.Airplane = db.AeroplaneRepository.Get(departureDto.AirplaneId);
 
-            db.DepartureRepository.Create(departure);
-            db.SaveChanges();
+            var validationResult = validator.Validate(departure);
+
+            if (validationResult.IsValid)
+            {
+                db.DepartureRepository.Create(departure);
+                db.SaveChanges();
+            }
+            else
+            {
+                throw new ValidationException(validationResult.Errors);
+            }
 
             return mapper.Map<Departure, DepartureDto>(departure);
         }
@@ -51,8 +63,17 @@ namespace Airport.BLL.Services
             departure.Airplane = db.AeroplaneRepository.Get(departureDto.AirplaneId);
             departure.Crew = db.CrewRepositiry.Get(departureDto.CrewId);
 
-            db.DepartureRepository.Update(departure);
-            db.SaveChanges();
+            var validationResult = validator.Validate(departure);
+
+            if (validationResult.IsValid)
+            {
+                db.DepartureRepository.Update(departure);
+                db.SaveChanges();
+            }
+            else
+            {
+                throw new ValidationException(validationResult.Errors);
+            }
 
             return mapper.Map<Departure, DepartureDto>(departure);
         }

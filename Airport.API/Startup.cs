@@ -3,14 +3,17 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.EntityFrameworkCore;
 using AutoMapper;
+using FluentValidation;
 using Airport.DAL;
 using Airport.DAL.Interfaces;
 using Airport.DAL.Entities;
 using Airport.BLL.Interfaces;
 using Airport.BLL.Services;
 using Airport.Shared.DTO;
-using Microsoft.EntityFrameworkCore;
+using Airport.BLL.Validators;
+using Airport.BLL.Mappers;
 
 namespace Airport.API
 {
@@ -38,7 +41,22 @@ namespace Airport.API
             services.AddScoped<IStewardessService, StewardessService>();
             services.AddScoped<IFlightService, FlightService>();
             services.AddScoped<IDepartureService, DepartureService>();
-            services.AddScoped(_ => MapperConfiguration().CreateMapper());
+            
+            var config = new MapperConfiguration(cfg => cfg.AddProfile(new GeneralMapperProfile()));
+            services.AddSingleton(_ => config.CreateMapper());
+
+            services.AddTransient<IValidator<Aeroplane>, AeroplaneValidator>();
+            services.AddTransient<IValidator<AeroplaneType>, AeroplaneTypeValidator>();
+            services.AddTransient<IValidator<Flight>, FlightValidator>();
+            services.AddTransient<IValidator<Pilot>, PilotValidator>();
+            services.AddTransient<IValidator<Stewardess>, StewardessValidator>();
+            services.AddTransient<IValidator<Crew>, CrewValidator>();
+            services.AddTransient<IValidator<Departure>, DepartureValidator>();
+            services.AddTransient<IValidator<Ticket>, TicketValidator>();
+            
+            services.AddDbContext<AirportContext>(options =>
+               options.UseSqlServer(Configuration.GetConnectionString("AirportDb"), b => b.MigrationsAssembly("Airport.DAL")),
+               ServiceLifetime.Transient);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -50,52 +68,6 @@ namespace Airport.API
             }
 
             app.UseMvc();
-        }
-
-        public MapperConfiguration MapperConfiguration()
-        {
-            var config = new MapperConfiguration(cfg =>
-            {
-                cfg.CreateMap<AeroplaneType, AeroplaneTypeDto>();
-                cfg.CreateMap<AeroplaneTypeDto, AeroplaneType>();
-
-                cfg.CreateMap<Pilot, PilotDto>();
-                cfg.CreateMap<PilotDto, Pilot>();
-
-                cfg.CreateMap<Stewardess, StewardessDto>();
-                cfg.CreateMap<StewardessDto, Stewardess>();
-
-                cfg.CreateMap<AeroplaneDto, Aeroplane>()
-                    .ForMember(model => model.AeroplaneType, dto => dto.Ignore());
-                cfg.CreateMap<Aeroplane, AeroplaneDto>()
-                    .ForMember(dto => dto.AeroplaneTypeId, model => model.MapFrom(m => m.AeroplaneType.Id));
-
-                cfg.CreateMap<CrewDto, Crew>()
-                    .ForMember(model => model.Pilot, dto => dto.Ignore())
-                    .ForMember(model => model.Stewardesses, dto => dto.Ignore());
-                cfg.CreateMap<Crew, CrewDto>()
-                    .ForMember(dto => dto.PilotId, model => model.MapFrom(m => m.Pilot.Id))
-                    .ForMember(dto => dto.StewardessesId, model => model.MapFrom(m => m.Stewardesses.Select(s => s.Id)));
-
-                cfg.CreateMap<DepartureDto, Departure>()
-                    .ForMember(model => model.Airplane, dto => dto.Ignore())
-                    .ForMember(model => model.Crew, dto => dto.Ignore());
-                cfg.CreateMap<Departure, DepartureDto>()
-                    .ForMember(dto => dto.AirplaneId, model => model.MapFrom(m => m.Airplane.Id))
-                    .ForMember(dto => dto.CrewId, model => model.MapFrom(m => m.Crew.Id));
-
-                cfg.CreateMap<FlightDto, Flight>()
-                    .ForMember(model => model.Tickets, dto => dto.Ignore());
-                cfg.CreateMap<Flight, FlightDto>()
-                    .ForMember(dto => dto.TicketsId, model => model.MapFrom(m => m.Tickets.Select(t => t.Id)));
-
-                cfg.CreateMap<TicketDto, Ticket>()
-                    .ForMember(model => model.Flight, dto => dto.Ignore());
-                cfg.CreateMap<Ticket, TicketDto>()
-                    .ForMember(dto => dto.FlightId, model => model.MapFrom(m => m.Flight.Id));
-            });
-
-            return config;
         }
     }
 }

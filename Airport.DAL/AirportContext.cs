@@ -23,24 +23,13 @@ namespace Airport.DAL
         public DbSet<Ticket> Tickets { get; set; }
 
 
-        public AirportContext()
+        public AirportContext(DbContextOptions<AirportContext> options) : base(options)
         {
             //Database.EnsureDeleted();
             Database.Migrate();
             AirportInitializer.IntializateIfEmpty(this);
-
-            //if (Database.EnsureCreated())
-            //{
-            //    AirportInitializer.IntializateIfEmpty(this);
-            //}
-
         }
 
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        {
-            // I know it`s a bad way to use connecting string
-            optionsBuilder.UseSqlServer("Server=(localdb)\\MSSQLLocalDB;Database=AirportDb(Bilyk);Trusted_Connection=True;");
-        }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

@@ -1,11 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using AutoMapper;
+using FluentValidation;
 using Airport.BLL.Interfaces;
 using Airport.DAL.Interfaces;
 using Airport.DAL.Entities;
 using Airport.Shared.DTO;
-using AutoMapper;
+
 
 namespace Airport.BLL.Services
 {
@@ -13,11 +15,13 @@ namespace Airport.BLL.Services
     {
         private IUnitOfWork db;
         private IMapper mapper;
+        IValidator<Crew> validator;
 
-        public CrewService(IUnitOfWork uow, IMapper mapper)
+        public CrewService(IUnitOfWork uow, IMapper mapper, IValidator<Crew> validator)
         {
             this.db = uow;
             this.mapper = mapper;
+            this.validator = validator;
         }
 
 
@@ -38,9 +42,18 @@ namespace Airport.BLL.Services
             crew.Id = Guid.NewGuid();
             crew.Pilot = db.PilotRepositiry.Get(crewDto.PilotId);
             crew.Stewardesses = db.StewardessRepositiry.GetAll().Where(i => crewDto.StewardessesId.Contains(i.Id)).ToList();
-            
-            db.CrewRepositiry.Create(crew);
-            db.SaveChanges();
+
+            var validationResult = validator.Validate(crew);
+
+            if (validationResult.IsValid)
+            {
+                db.CrewRepositiry.Create(crew);
+                db.SaveChanges();
+            }
+            else
+            {
+                throw new ValidationException(validationResult.Errors);
+            }
 
             return mapper.Map<Crew, CrewDto>(crew);
         }
@@ -53,8 +66,17 @@ namespace Airport.BLL.Services
             crew.Pilot = db.PilotRepositiry.Get(crewDto.PilotId);
             crew.Stewardesses = db.StewardessRepositiry.GetAll().Where(i => crewDto.StewardessesId.Contains(i.Id)).ToList();
 
-            db.CrewRepositiry.Update(crew);
-            db.SaveChanges();
+            var validationResult = validator.Validate(crew);
+
+            if (validationResult.IsValid)
+            {
+                db.CrewRepositiry.Update(crew);
+                db.SaveChanges();
+            }
+            else
+            {
+                throw new ValidationException(validationResult.Errors);
+            }
 
             return mapper.Map<Crew, CrewDto>(crew);
         }
