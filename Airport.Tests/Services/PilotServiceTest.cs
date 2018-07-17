@@ -14,12 +14,12 @@ using Airport.BLL.Services;
 namespace Airport.Tests.Services
 {
     [TestFixture]
-    public class StewardessServiceTest
+    public class PilotServiceTest
     {
         private IUnitOfWork unitOfWorkFake;
         private IMapper mapper;
-        private IValidator<Stewardess> validator;
-        private IValidator<Stewardess> alwaysValidValidator;
+        private IValidator<Pilot> validator;
+        private IValidator<Pilot> alwaysValidValidator;
 
 
         [SetUp]
@@ -27,26 +27,27 @@ namespace Airport.Tests.Services
         {
             var config = new MapperConfiguration(cfg => cfg.AddProfile(new GeneralMapperProfile()));
             mapper = config.CreateMapper();
-                        
+
             unitOfWorkFake = A.Fake<IUnitOfWork>();
 
-            validator = new StewardessValidator();
-            alwaysValidValidator = A.Fake<IValidator<Stewardess>>();
-            A.CallTo(() => alwaysValidValidator.Validate(A<Stewardess>._)).Returns(new ValidationResult());
+            validator = new PilotValidator();
+            alwaysValidValidator = A.Fake<IValidator<Pilot>>();
+            A.CallTo(() => alwaysValidValidator.Validate(A<Pilot>._)).Returns(new ValidationResult());
         }
 
         [Test]
         public void Create_WhenDtoIsPassed_ThenReturnedTheSameWithCreatedId()
         {
             // Arrange
-            var dto = new StewardessDto()
+            var dto = new PilotDto()
             {
                 FirstName = "FirstName",
                 SecondName = "SecondName",
-                BirthDate = new DateTime(1990, 1, 1)
+                BirthDate = new DateTime(1980, 1, 1),
+                Experience = 5
             };
 
-            var service = new StewardessService(unitOfWorkFake, mapper, alwaysValidValidator);
+            var service = new PilotService(unitOfWorkFake, mapper, alwaysValidValidator);
 
             // Act
             var returnedDto = service.Create(dto);
@@ -56,15 +57,16 @@ namespace Airport.Tests.Services
             Assert.AreEqual(dto.FirstName, returnedDto.FirstName);
             Assert.AreEqual(dto.SecondName, returnedDto.SecondName);
             Assert.AreEqual(dto.BirthDate, returnedDto.BirthDate);
+            Assert.AreEqual(dto.Experience, returnedDto.Experience);
         }
 
         [Test]
         public void Create_WhenDtoIsEmpty_ThenThrowValidExeption()
         {
             // Arrange
-            var dto = new StewardessDto() { };
+            var dto = new PilotDto() { };
 
-            var service = new StewardessService(unitOfWorkFake, mapper, validator);
+            var service = new PilotService(unitOfWorkFake, mapper, validator);
 
             // Act
 
@@ -78,14 +80,15 @@ namespace Airport.Tests.Services
             // Arrange
             var id = Guid.NewGuid();
 
-            var dto = new StewardessDto()
+            var dto = new PilotDto()
             {
                 FirstName = "FirstName",
                 SecondName = "SecondName",
-                BirthDate = new DateTime(1990, 1, 1)
+                BirthDate = new DateTime(1980, 1, 1),
+                Experience = 5
             };
 
-            var service = new StewardessService(unitOfWorkFake, mapper, alwaysValidValidator);
+            var service = new PilotService(unitOfWorkFake, mapper, alwaysValidValidator);
 
             // Act
             var returnedDto = service.Update(id, dto);
@@ -95,6 +98,7 @@ namespace Airport.Tests.Services
             Assert.AreEqual(dto.FirstName, returnedDto.FirstName);
             Assert.AreEqual(dto.SecondName, returnedDto.SecondName);
             Assert.AreEqual(dto.BirthDate, returnedDto.BirthDate);
+            Assert.AreEqual(dto.Experience, returnedDto.Experience);
         }
 
         [Test]
@@ -102,9 +106,9 @@ namespace Airport.Tests.Services
         {
             // Arrange
             var id = default(Guid);
-            var dto = new StewardessDto() { };
+            var dto = new PilotDto() { };
 
-            var service = new StewardessService(unitOfWorkFake, mapper, validator);
+            var service = new PilotService(unitOfWorkFake, mapper, validator);
 
             // Act
 

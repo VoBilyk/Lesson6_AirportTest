@@ -14,12 +14,12 @@ using Airport.BLL.Services;
 namespace Airport.Tests.Services
 {
     [TestFixture]
-    public class StewardessServiceTest
+    public class AeroplaneServiceTest
     {
         private IUnitOfWork unitOfWorkFake;
         private IMapper mapper;
-        private IValidator<Stewardess> validator;
-        private IValidator<Stewardess> alwaysValidValidator;
+        private IValidator<Aeroplane> validator;
+        private IValidator<Aeroplane> alwaysValidValidator;
 
 
         [SetUp]
@@ -27,44 +27,44 @@ namespace Airport.Tests.Services
         {
             var config = new MapperConfiguration(cfg => cfg.AddProfile(new GeneralMapperProfile()));
             mapper = config.CreateMapper();
-                        
+
             unitOfWorkFake = A.Fake<IUnitOfWork>();
 
-            validator = new StewardessValidator();
-            alwaysValidValidator = A.Fake<IValidator<Stewardess>>();
-            A.CallTo(() => alwaysValidValidator.Validate(A<Stewardess>._)).Returns(new ValidationResult());
+            validator = new AeroplaneValidator();
+            alwaysValidValidator = A.Fake<IValidator<Aeroplane>>();
+            A.CallTo(() => alwaysValidValidator.Validate(A<Aeroplane>._)).Returns(new ValidationResult());
         }
 
         [Test]
         public void Create_WhenDtoIsPassed_ThenReturnedTheSameWithCreatedId()
         {
             // Arrange
-            var dto = new StewardessDto()
+            var dto = new AeroplaneDto()
             {
-                FirstName = "FirstName",
-                SecondName = "SecondName",
-                BirthDate = new DateTime(1990, 1, 1)
+                AeroplaneTypeId = Guid.NewGuid(),
+                Name = "Boeing-747",
+                Lifetime = new TimeSpan(10,0,0)
             };
 
-            var service = new StewardessService(unitOfWorkFake, mapper, alwaysValidValidator);
+            var service = new AeroplaneService(unitOfWorkFake, mapper, alwaysValidValidator);
 
             // Act
             var returnedDto = service.Create(dto);
 
             // Assert
             Assert.True(returnedDto.Id != default(Guid));
-            Assert.AreEqual(dto.FirstName, returnedDto.FirstName);
-            Assert.AreEqual(dto.SecondName, returnedDto.SecondName);
-            Assert.AreEqual(dto.BirthDate, returnedDto.BirthDate);
+            Assert.AreEqual(dto.Name, returnedDto.Name);
+            Assert.AreEqual(dto.Lifetime, returnedDto.Lifetime);
+            Assert.AreEqual(dto.AeroplaneTypeId, returnedDto.AeroplaneTypeId);
         }
 
         [Test]
         public void Create_WhenDtoIsEmpty_ThenThrowValidExeption()
         {
             // Arrange
-            var dto = new StewardessDto() { };
+            var dto = new AeroplaneDto() { };
 
-            var service = new StewardessService(unitOfWorkFake, mapper, validator);
+            var service = new AeroplaneService(unitOfWorkFake, mapper, validator);
 
             // Act
 
@@ -78,23 +78,24 @@ namespace Airport.Tests.Services
             // Arrange
             var id = Guid.NewGuid();
 
-            var dto = new StewardessDto()
+            var dto = new AeroplaneDto()
             {
-                FirstName = "FirstName",
-                SecondName = "SecondName",
-                BirthDate = new DateTime(1990, 1, 1)
+                AeroplaneTypeId = Guid.NewGuid(),
+                Name = "Boeing-747",
+                Lifetime = new TimeSpan(10, 0, 0)
             };
 
-            var service = new StewardessService(unitOfWorkFake, mapper, alwaysValidValidator);
+            var service = new AeroplaneService(unitOfWorkFake, mapper, alwaysValidValidator);
 
             // Act
             var returnedDto = service.Update(id, dto);
 
             // Assert
             Assert.True(returnedDto.Id == id);
-            Assert.AreEqual(dto.FirstName, returnedDto.FirstName);
-            Assert.AreEqual(dto.SecondName, returnedDto.SecondName);
-            Assert.AreEqual(dto.BirthDate, returnedDto.BirthDate);
+            Assert.True(returnedDto.Id != default(Guid));
+            Assert.AreEqual(dto.Name, returnedDto.Name);
+            Assert.AreEqual(dto.Lifetime, returnedDto.Lifetime);
+            Assert.AreEqual(dto.AeroplaneTypeId, returnedDto.AeroplaneTypeId);
         }
 
         [Test]
@@ -102,9 +103,9 @@ namespace Airport.Tests.Services
         {
             // Arrange
             var id = default(Guid);
-            var dto = new StewardessDto() { };
+            var dto = new AeroplaneDto() { };
 
-            var service = new StewardessService(unitOfWorkFake, mapper, validator);
+            var service = new AeroplaneService(unitOfWorkFake, mapper, validator);
 
             // Act
 
