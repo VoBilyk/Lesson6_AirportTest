@@ -1,25 +1,14 @@
 ﻿using NUnit.Framework;
-using FluentValidation;
-using AutoMapper;
-using Airport.BLL.Mappers;
-using Airport.DAL.Entities;
-using Airport.BLL.Validators;
-using Airport.DAL.Interfaces;
-using Airport.Shared.DTO;
-using Airport.BLL.Services;
-using Airport.DAL;
-using Airport.BLL.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using System.Linq;
 using System.Net.Http;
-using System.Net.Http.Headers;
-using System;
 using System.Net;
-using Airport.API.Controllers;
-using System.IO;
-using Newtonsoft.Json;
-using System.Collections.Generic;
 using System.Text;
+using Newtonsoft.Json;
+using Airport.DAL.Entities;
+using Airport.Shared.DTO;
+using Airport.DAL;
+
 
 namespace Airport.Tests.Requests
 {
